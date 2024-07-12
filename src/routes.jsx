@@ -2,11 +2,17 @@ import ErrorPage from "./components/errorpage/errorpage.jsx";
 import { CurrentUser, EditCurrentUser } from "./components/user/user.jsx";
 import { EditPost, CreatePost } from "./components/post/post.jsx";
 import LogIn from "./components/login/login.jsx";
+import { LogOut } from "./components/logout/logout.jsx";
 
 const routes = [
     {
         path: "/",
         element: <LogIn></LogIn>,
+        errorElement: <ErrorPage></ErrorPage>,
+    },
+    {
+        path: "/logout",
+        element: <LogOut></LogOut>,
         errorElement: <ErrorPage></ErrorPage>,
     },
     {
