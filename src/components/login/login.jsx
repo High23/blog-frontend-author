@@ -19,7 +19,6 @@ export default function LogIn() {
                 response = await fetch(siteUrl + 'login');
             }
             if (response.status >= 400) {
-                navigate("/user", {replace: true});
                 setStatus(response.status)
             }
         }
@@ -28,6 +27,7 @@ export default function LogIn() {
     return (
         <>
             {(status === 200 || status === null) && <LogInForm siteUrl={siteUrl} navigate={navigate}></LogInForm>}
+            {status !== null && {status}}
         </>
     )
 }
