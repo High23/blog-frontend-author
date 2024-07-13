@@ -29,6 +29,7 @@ export function EditPost() {
     }, [])
     return (
         <>
+            <NavBar></NavBar>
             {error === null && oldPost !== null ? 
             <EditPostForm token={token} oldPost={oldPost} params={params}></EditPostForm>
             : <>{error}</>}
@@ -127,7 +128,7 @@ export function CreatePost() {
 
     return (
         <>
-            <NavBar token={token}></NavBar>
+            <NavBar></NavBar>
             {error === null ? 
             <CreateForm token={token}></CreateForm>
             : <>{error}</>}
