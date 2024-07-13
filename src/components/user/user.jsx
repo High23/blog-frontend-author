@@ -48,24 +48,33 @@ function ShowPostsOrComments({ userId, token }) {
     const [data, setData] = useState(null);
     const [refresh, setRefresh] = useState(0)
     const navigate = useNavigate()
-    
-    useEffect(() => {
-        getPostsOrComments('allPosts', userId, setData, token)
-    }, [refresh])
-    
+    const siteUrl = import.meta.env.VITE_SITEURL
+        
+    useEffect(() => {}, [refresh])
+
     async function changePostStatus(status, postId) {
         if (status) {
             status = 'unpublish'
         } else {
             status = 'publish'
         }
-        await fetch(import.meta.env.VITE_SITEURL + `post/${postId}/${status}`, {
+        await fetch(siteUrl + `post/${postId}/${status}`, {
             method: "PUT",
             headers: {
                 "Authorization": "Bearer " + token
             }
         });
-        setRefresh(num => num + 1)
+        getPostsOrComments('allPosts', userId, setData, token)
+    }
+
+    async function deletePost(info) {
+        await fetch(siteUrl + `post/${info._id}/delete`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": "Bearer " + token
+            }
+        });
+        getPostsOrComments('allPosts', userId, setData, token)
     }
 
     return (
@@ -82,7 +91,8 @@ function ShowPostsOrComments({ userId, token }) {
                 {data !== null && data.map((info) => {
                     return (
                         <div key={ info._id }>
-                            { info.title && 
+
+                            { info.title && // Post elements
                             <>
                                 <h3 className='post-title clickable'>{info.title}</h3>
                                 <button type="button" onClick={() => {
@@ -90,10 +100,28 @@ function ShowPostsOrComments({ userId, token }) {
                                 }}>Edit</button>
                                 <button type="button"  onClick={() => {
                                     changePostStatus(info.published, info._id)
-                                }}>{info.published === true ? 'unpublish' : 'publish'}</button>
+                                }}>{info.published === true ? 'Unpublish' : 'Publish'}</button>
+                                <button type="button" onClick={() => {
+                                    deletePost(info)                                
+                                }}>Delete</button>
                             </>
                             }
-                            { info.post && <h4>Posted on: {info.post.title}</h4> }
+
+                            { info.post && // Comment elements
+                            <span>
+                                <h4>Posted on: {info.post.title}</h4>
+                                <button type="button" onClick={async () => {
+                                    await fetch(siteUrl + `post/${info.post._id}/comment/${info._id}/delete`, {
+                                        method: "DELETE",
+                                        headers: {
+                                            "Authorization": "Bearer " + token
+                                        }
+                                    });
+                                    getPostsOrComments('comments', userId, setData, token)
+                                }}>Delete</button>
+                            </span> 
+                            }
+
                             <div>Created on: {format(new UTCDate(info.date), 'LL/dd/yy KK:mm a')} UTC</div>
                             <p className='user-comment'>{info.text}</p>
                         </div>
